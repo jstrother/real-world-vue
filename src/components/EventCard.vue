@@ -3,6 +3,7 @@
     <div class="event-card -shadow">
       <span class="eyebrow">@{{ event.time }} on {{ event.date }}</span>
       <h4 class="title">{{ event.title }}</h4>
+      <BaseIcon name="users" />
       <span>{{ event.attendees.length }} attending</span>
     </div>
   </router-link>
@@ -33,7 +34,6 @@ export default {
   margin-bottom: 24px;
   transition: all 0.2s linear;
   cursor: pointer;
-  max-width: 70%;
 }
 .event-card:hover {
   transform: scale(1.01);
