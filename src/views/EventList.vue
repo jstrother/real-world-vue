@@ -20,10 +20,10 @@ export default {
   },
   created() {
     EventService.getEvents()
-      .then(res => {
+      .then((res) => {
         this.events = res.data;
       })
-      .catch(err => {
+      .catch((err) => {
         throw new Error(err);
       });
   },
