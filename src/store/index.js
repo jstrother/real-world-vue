@@ -20,6 +20,8 @@ export default new Vuex.Store({
       'community',
     ],
     events: [],
+    totalEvents: 0,
+    event: {},
   },
   mutations: {
     ADD_EVENT(state, event) {
@@ -27,6 +29,12 @@ export default new Vuex.Store({
     },
     SET_EVENTS(state, events) {
       state.events = events;
+    },
+    TOTAL_EVENTS(state, totalEvents) {
+      state.totalEvents = totalEvents;
+    },
+    SET_EVENT(state, event) {
+      state.event = event;
     },
   },
   actions: {
@@ -42,13 +50,33 @@ export default new Vuex.Store({
     fetchEvents({ commit }, { perPage, page }) {
       EventService.getEvents(perPage, page)
         .then((res) => {
+          commit('TOTAL_EVENTS', res.headers['x-total-count']);
           commit('SET_EVENTS', res.data);
         })
         .catch((err) => {
           throw new Error(err);
         });
     },
+    fetchEvent({ commit, getters }, id) {
+      const event = getters.getEventById(id);
+
+      if (event) {
+        commit('SET_EVENT', event);
+      } else {
+        EventService.getEvent(id)
+          .then((res) => {
+            commit('SET_EVENT', res.data);
+          })
+          .catch((err) => {
+            throw new Error(err);
+          });
+      }
+    },
   },
   modules: {},
-  getters: {},
+  getters: {
+    getEventById: (state) => (id) => {
+      return state.events.find((event) => event.id === id);
+    },
+  },
 });
