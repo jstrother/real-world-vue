@@ -219,13 +219,8 @@
     {
       "id": 10,
       "category": "animal welfare",
-      "organizer": {
-        "user": {
-          "id": "abc123",
-          "name": "Adam Jahr"
-        }
-      },
-      "title": "Gregg's Event",
+      "organizer": "Adam Jahr",
+      "title": "Adam's Event",
       "description": "We'll do stuff",
       "location": "Your House",
       "date": "",
@@ -303,6 +298,17 @@
           "name": "Dan Butt"
         }
       ]
+    },
+    {
+      "category": "animal welfare",
+      "organizer": "Jim Strother",
+      "id": 292529,
+      "title": "Puppy Picnic",
+      "description": "",
+      "location": "",
+      "date": "",
+      "time": "",
+      "attendees": []
     }
   ]
 }

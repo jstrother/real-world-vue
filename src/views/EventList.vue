@@ -17,32 +17,47 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import EventCard from '@/components/EventCard';
-import { mapState, mapActions } from 'vuex';
+import store from '@/store/index';
+
+function getPageEvents(routeTo, next) {
+  const currentPage = parseInt(routeTo.query.page) || 1;
+  store
+    .dispatch('event/fetchEvents', {
+      page: currentPage,
+    })
+    .then(() => {
+      routeTo.params.page = currentPage;
+      next();
+    });
+}
 
 export default {
+  props: {
+    page: {
+      type: Number,
+      required: true,
+    },
+  },
   components: {
     EventCard,
   },
-  created() {
-    this.fetchEvents({
-      perPage: 3,
-      page: this.page,
-    });
+  beforeRouteEnter(routeTo, routeFrom, next) {
+    getPageEvents(routeTo, next);
+  },
+  beforeRouteUpdate(routeTo, routeFrom, next) {
+    getPageEvents(routeTo, next);
   },
   computed: {
-    page() {
-      return parseInt(this.$route.query.page) || 1;
-    },
     hasNextPage() {
-      return this.event.totalEvents > this.page * 3;
+      return this.event.totalEvents > this.page * this.event.perPage;
     },
     hasPrevPage() {
       return this.page !== 1;
     },
     ...mapState(['event', 'user']),
   },
-  methods: mapActions('event', ['fetchEvents']),
 };
 </script>
 

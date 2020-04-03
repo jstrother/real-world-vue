@@ -3,7 +3,7 @@
     <div class="event-header">
       <span class="eyebrow">@{{ event.time }} on {{ event.date }}</span>
       <h1 class="title">{{ event.title }}</h1>
-      <h5>Organized by {{ event.organizer ? event.organizer.name : '' }}</h5>
+      <h5>Organized by {{ event.organizer ? event.organizer : '' }}</h5>
       <h5>Category: {{ event.category }}</h5>
     </div>
 
@@ -27,24 +27,13 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-import NProgress from 'nprogress';
-import store from '@/store';
-
 export default {
   props: {
-    id: [Number, String],
+    event: {
+      type: Object,
+      required: true,
+    },
   },
-  beforeRouteEnter(routeTo, routeFrom, next) {
-    NProgress.start();
-    store.dispatch('event/fetchEvent', routeTo.params.id).then(() => {
-      NProgress.done();
-      next();
-    });
-  },
-  computed: mapState({
-    event: (state) => state.event.event,
-  }),
 };
 </script>
 
