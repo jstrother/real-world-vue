@@ -2,6 +2,8 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import NProgress from 'nprogress';
 import EventList from '@/views/EventList';
+import NotFound from '@/views/NotFound';
+import NetworkIssue from '@/views/NetworkIssue';
 import store from '@/store/index';
 
 Vue.use(VueRouter);
@@ -22,10 +24,19 @@ const routes = [
     component: () => import(/* webpackChunkName: "event-show" */ '../views/EventShow.vue'),
     props: true,
     beforeEnter(routeTo, routeFrom, next) {
-      store.dispatch('event/fetchEvent', routeTo.params.id).then((event) => {
-        routeTo.params.event = event;
-        next();
-      });
+      store
+        .dispatch('event/fetchEvent', routeTo.params.id)
+        .then((event) => {
+          routeTo.params.event = event;
+          next();
+        })
+        .catch((err) => {
+          if (err.response && err.response.status === 404) {
+            next({ name: '404', params: { resource: 'event' } });
+          } else {
+            next({ name: 'network-issue' });
+          }
+        });
     },
   },
   {
@@ -35,6 +46,21 @@ const routes = [
     // this generates a separate chunk (event-create.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "event-create" */ '../views/EventCreate.vue'),
+  },
+  {
+    path: '/404',
+    name: '404',
+    component: NotFound,
+    props: true,
+  },
+  {
+    path: '/network-issue',
+    name: 'network-issue',
+    component: NetworkIssue,
+  },
+  {
+    path: '*',
+    redirect: { name: 404, params: { resource: 'page' } },
   },
 ];
 
