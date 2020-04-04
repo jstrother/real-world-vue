@@ -1,6 +1,7 @@
 <template>
   <div>
     <h1>Create an Event</h1>
+
     <form @submit.prevent="createEvent">
       <BaseSelect
         label="Select a category"
@@ -14,6 +15,7 @@
       </template>
 
       <h3>Name & describe your event</h3>
+
       <BaseInput
         type="text"
         placeholder="Title"
@@ -41,6 +43,7 @@
       </template>
 
       <h3>Where is your event?</h3>
+
       <BaseInput
         type="text"
         placeholder="Location"
@@ -54,6 +57,7 @@
       </template>
 
       <h3>When is your event?</h3>
+
       <div class="field">
         <label>Date</label>
         <Datepicker
@@ -79,7 +83,10 @@
         <p v-if="!$v.event.time.required" class="errorMessage">Time is required</p>
       </template>
 
-      <BaseButton type="submit" buttonClass="-fill-gradient">Submit</BaseButton>
+      <BaseButton type="submit" buttonClass="-fill-gradient" :disabled="$v.$anyError">
+        Submit
+      </BaseButton>
+      <p v-if="$v.$anyError" class="errorMessage">Please fill out the required fields.</p>
     </form>
   </div>
 </template>
@@ -116,19 +123,22 @@ export default {
   },
   methods: {
     createEvent() {
-      NProgress.start();
-      this.$store
-        .dispatch('event/createEvent', this.event)
-        .then(() => {
-          this.$router.push({
-            name: 'event-show',
-            params: { id: this.event.id },
+      this.$v.$touch();
+      if (!this.$v.$invalid) {
+        NProgress.start();
+        this.$store
+          .dispatch('event/createEvent', this.event)
+          .then(() => {
+            this.$router.push({
+              name: 'event-show',
+              params: { id: this.event.id },
+            });
+            this.event = this.createFreshEvent();
+          })
+          .catch(() => {
+            NProgress.done();
           });
-          this.event = this.createFreshEvent();
-        })
-        .catch(() => {
-          NProgress.done();
-        });
+      }
     },
     createFreshEvent() {
       const user = this.$store.state.user.user;
