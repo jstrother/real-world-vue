@@ -2,10 +2,11 @@ import Vue from 'vue';
 import upperFirst from 'lodash/upperFirst';
 import camelCase from 'lodash/camelCase';
 import Vuelidate from 'vuelidate';
+import 'nprogress/nprogress.css';
 import App from './App.vue';
 import router from './router';
 import store from './store';
-import 'nprogress/nprogress.css';
+import DateFilter from './filters/date';
 
 const requireComponent = require.context('./components', false, /Base[A-Z]\w+\.(vue|js)$/);
 
@@ -16,6 +17,8 @@ requireComponent.keys().forEach((fileName) => {
 
   Vue.component(componentName, componentConfig.default || componentConfig);
 });
+
+Vue.filter('date', DateFilter);
 
 Vue.use(Vuelidate);
 
